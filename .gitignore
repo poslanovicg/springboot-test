@@ -25,3 +25,6 @@ replay_pid*
 
 # Ignore Maven target folder
 target/
+
+# Ignore .env
+.env
