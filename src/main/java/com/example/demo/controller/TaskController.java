@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/tasks")
@@ -21,10 +22,22 @@ public class TaskController {
         this.taskRepository = taskRepository;
     }
 
+    // Helper Method to find a specific task by its ID 
+    private Optional<Task> findTask(Long id){
+        return taskRepository.findById(id);
+    }
+
+    // Helper method to return a 404 Not Found error response
+    private ResponseEntity<?> notFoundError(String text){
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(Map.of("error", text));
+    }
+
     @PostMapping
     public ResponseEntity<?> createTask(@RequestBody Task task) {
         /**
-         * Explanation for myself: 
+         * Documentation for myself: 
          *      https://docs.oracle.com/javase/8/docs/api/java/util/Map.html
          *      https://docs.oracle.com/javase/tutorial/collections/interfaces/map.html
          * A Map<K, V> is a data structure that stores key-value pairs that maps keys to values
@@ -61,4 +74,30 @@ public class TaskController {
         Task savedTask = taskRepository.save(task);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedTask);
     }
+
+    @GetMapping
+    public List<Task> getAllTasks(){
+        return taskRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getTaskById(@PathVariable Long id) { 
+        /*
+         * Documentation for myself: 
+         * Optional<T> is a container object which may or may not contain a non-null value.
+         * If a value is present, isPresent() will return true and get() will return the value
+         * 
+         * .isPresent() & get() are both methods from Java's Optional class 
+         * 
+         * .isPresent() checks if a value exists inside the Optional
+         * .get() retrieves the value inside the Optional
+         */
+        Optional<Task> task = findTask(id);
+        
+        if (task.isPresent()) {
+            return ResponseEntity.ok(task.get());
+        } 
+        
+        return notFoundError("Task with ID: " + id + " couldn't be found. Task doesn't exist.");
+    }    
 }
