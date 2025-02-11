@@ -100,4 +100,16 @@ public class TaskController {
         
         return notFoundError("Task with ID: " + id + " couldn't be found. Task doesn't exist.");
     }    
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteTask(@PathVariable Long id) {
+        Optional<Task> task = findTask(id);
+    
+        if (task.isPresent()) {
+            taskRepository.deleteById(id);
+            return ResponseEntity.ok(Map.of("message", "Deleted Task with ID: " + id));
+        } 
+    
+        return notFoundError("Task with ID: " + id + " couldn't be deleted. Task doesn't exist.");
+    }
 }
