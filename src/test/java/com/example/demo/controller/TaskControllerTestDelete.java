@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.controller.TaskControllerTestBase;
 import com.example.demo.model.Task;
 import com.example.demo.repository.TaskRepository;
 
@@ -20,7 +21,7 @@ import java.util.Optional;
 /*
  * This test class checks the "delete" functionality
  */
-public class TaskControllerTestDelete {
+public class TaskControllerTestDelete extends TaskControllerTestBase {
   // Creates a mock version of TaskRepository 
   // This allows us to control its behavior during tests without accessing a real DB
   @Mock
@@ -46,7 +47,7 @@ public class TaskControllerTestDelete {
     System.out.println("----------Starting testDeleteTask_success----------");
 
     // Create a new Task with a valid title and description
-    Task task = new Task("Task 1", "Task 1 Description");
+    Task task = createTestTask("Task 1", "Task 1 Description");
     task.setId(1L);
 
     when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
@@ -59,8 +60,7 @@ public class TaskControllerTestDelete {
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
     // The response body should be a Map containing a success message.
-    Map<String, String> result = (Map<String, String>) response.getBody();
-    System.out.println("Response body: " + result);
+    Map<String, String> result = extractErrors(response);
 
     // Verify that the Map contains a key "success".
     assertTrue(result.containsKey("success"), "Expected errors to contain key 'success', but got: " + result);
@@ -82,7 +82,7 @@ public class TaskControllerTestDelete {
     System.out.println("----------Starting testDeleteTaskById_notFound----------");
 
     // Create a new Task with a valid title and description
-    Task task = new Task("Task 1", "Task 1 Description");
+    Task task = createTestTask("Task 1", "Task 1 Description");
     task.setId(1L);
 
     when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
@@ -95,8 +95,7 @@ public class TaskControllerTestDelete {
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
 
     // The response body should be a Map containing an error message.
-    Map<String, String> result = (Map<String, String>) response.getBody();
-    System.out.println("Response body: " + result);
+    Map<String, String> result = extractErrors(response);
 
     // Verify that the Map contains a key "success".
     assertTrue(result.containsKey("error"), "Expected errors to contain key 'error', but got: " + result);

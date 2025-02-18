@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 /*
  * This test class checks the "create" functionality
  */
-public class TaskControllerTestCreate {
+public class TaskControllerTestCreate extends TaskControllerTestBase {
     // Creates a mock version of TaskRepository 
     // This allows us to control its behavior during tests without accessing a real DB
     @Mock
@@ -34,25 +34,6 @@ public class TaskControllerTestCreate {
     public void setUp() {
         // Initialize all fields
         MockitoAnnotations.openMocks(this);
-    }
-
-    /*
-     * Helper method to create a Task object
-     * 
-     * @param title             The title for the task 
-     * @param description       The description for the task
-     * @return a new Task object
-     */
-    private Task createTestTask(String title, String description){
-        Task task = new Task(title, description);
-        System.out.println("Created task: " + task);
-        return task; 
-    }
-
-    private Map<String, String> extractErrors(ResponseEntity<?> response) {
-        Map<String, String> errors = (Map<String, String>) response.getBody();
-        System.out.println("Errors map: " + errors);
-        return errors;
     }
 
     /**
