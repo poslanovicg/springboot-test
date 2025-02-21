@@ -3,8 +3,15 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name = "tasks", uniqueConstraints = {@UniqueConstraint(columnNames = "title")})
+@Getter
+@Setter
+@NoArgsConstructor
 public class Task {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,24 +26,8 @@ public class Task {
 
   private boolean completed = false;
 
-  // Constructor
-  public Task() {}
-
   public Task(String title, String description) {
     this.title = title;
     this.description = description;
   }
-
-  // Getter & Setter Methods
-  public Long getId() { return id; }
-  public void setId(Long id) { this.id = id; }
-
-  public String getTitle() { return title; }
-  public void setTitle(String title) { this.title = title; }
-
-  public String getDescription() { return description; }
-  public void setDescription(String description) { this.description = description; }
-
-  public boolean isCompleted() { return completed; }
-  public void setCompleted(boolean completed) { this.completed = completed; }
 }
