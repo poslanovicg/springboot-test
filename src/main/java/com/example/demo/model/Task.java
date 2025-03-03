@@ -26,6 +26,14 @@ public class Task {
 
   private boolean completed = false;
 
+  @ManyToMany
+  @JoinTable(
+      name = "tasks_assignees",
+      joinColumns = @JoinColumn(name = "task_id"),
+      inverseJoinColumns = @JoinColumn(name = "assignee_id")
+  )
+  private Set<Assignee> assignees;
+
   public Task(String title, String description) {
     this.title = title;
     this.description = description;
