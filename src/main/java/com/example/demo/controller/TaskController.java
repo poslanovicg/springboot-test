@@ -208,4 +208,60 @@ public class TaskController {
         
         return notFoundError("Task with ID: " + id + " couldn't be deleted. Task doesn't exist.");
     }
+
+    @PutMapping("/{taskId}/assign/{assigneeId}")
+    public ResponseEntity<?> assignTask(@PathVariable Long taskId, @PathVariable Long assigneeId) {
+        Optional<Task> optionalTask = taskRepository.findById(taskId);
+        Optional<Assignee> optionalAssignee = assigneeRepository.findById(assigneeId);
+
+        if (optionalTask.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Task with ID " + taskId + " not found"));
+        }
+
+        if (optionalAssignee.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Assignee with ID " + assigneeId + " not found"));
+        }
+
+        Task task = optionalTask.get();
+        Assignee assignee = optionalAssignee.get();
+
+        // Assign the assignee to the task
+        task.getAssignees().add(assignee);
+        taskRepository.save(task);
+
+        return ResponseEntity.ok(task);
+    }
+
+    @PutMapping("/{taskId}/unassign/{assigneeId}")
+    public ResponseEntity<?> unassignTask(@PathVariable Long taskId, @PathVariable Long assigneeId) {
+        Optional<Task> optionalTask = taskRepository.findById(taskId);
+        Optional<Assignee> optionalAssignee = assigneeRepository.findById(assigneeId);
+
+        if (optionalTask.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Task with ID " + taskId + " not found"));
+        }
+
+        if (optionalAssignee.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Assignee with ID " + assigneeId + " not found"));
+        }
+
+        Task task = optionalTask.get();
+        Assignee assignee = optionalAssignee.get();
+
+        // Check if the assignee is actually assigned to the task
+        if (!task.getAssignees().contains(assignee)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Assignee with ID " + assigneeId + " is not assigned to Task with ID " + taskId));
+        }
+
+        // Remove the assignee from the task
+        task.getAssignees().remove(assignee);
+        taskRepository.save(task);
+
+        return ResponseEntity.ok(Map.of("success", "Unassigned Assignee with ID " + assigneeId + " from Task with ID " + taskId));
+    }
 }
